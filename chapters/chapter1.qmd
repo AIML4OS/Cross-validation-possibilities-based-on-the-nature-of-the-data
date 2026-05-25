@@ -1,17 +1,25 @@
 
 # Training Materials on Cross-Validation
 
-Cross-validation is not one-size-fits-all it depends on the structure of your data
+Cross-validation is not a one-size-fits-all technique — it should always be adapted to the structure and nature of your data.
 
-## Why cross-validation matters
+---
 
-Goal: estimate generalization performance
+## Why Cross-Validation Matters
 
-Problem: single train/test split → high variance
+The main goal of cross-validation is to obtain a reliable estimate of a model’s **generalization performance**, i.e., how well it will perform on unseen data.
 
-Solution: resampling strategies
+A single train/test split is often not enough because it can lead to **high variance** in performance estimates. Depending on how the data is split, the model may appear artificially strong or weak.
 
-Key message: The way you split your data can make your model look better or worse than it really is.
+To address this issue, we use **resampling strategies**, which repeatedly split the data in different ways and average the results to get a more stable evaluation.
+
+---
+
+## Key Insight
+
+The way you split your data directly influences the perceived performance of your model.
+
+A poorly chosen validation strategy can make a model look better (or worse) than it truly is in practice, leading to misleading conclusions.
 
 
 ```{r training setup}
@@ -25,10 +33,43 @@ data_cv0 <-  read_parquet("data/data_synth_cv0.parquet", as_data_frame = TRUE)
 
 str(data_cv0)
 ```
-File description:
-This is a syntehtic file that simulates the answers received to the Survey on Construction Enterprises to collect key information on the structure and performance of the construction sector. Survey responses are used to define stratification variables that underpin estimation procedures extending beyond the sampled units. The effectiveness of this methodology critically depends on the completeness of all variables used in the stratum definition. However, non-response and partial non-response persist for a subset of these variables, posing challenges to data quality, accuracy, and reliability thus the use case in WP9 tries to predict the variables required for the strata.
-- ANO is year,
-- the other variables from DD_CC_FF_COD to UNI characterize the enterprise 
-- IMP 0 for a real answer, 1 or 2 imputed with values from year n-1 or -2, 3 other imputations - the 3 variables started with I are Integrated administrative variables - the survey questions are prefixes with QF - source informs about the survey - ID is the anonymous ID of the enterprise - unit is the anonymous unit of the enterprise when it may have several units - the target is QF185001
+# Construction Enterprises Survey Dataset (Synthetic File Description)
 
+## Overview
+
+This dataset is a synthetic file designed to simulate responses from the *Survey on Construction Enterprises*. The survey collects key information about the structure and performance of enterprises within the construction sector.
+
+The resulting data are used to define **stratification variables**, which form the basis for estimation procedures that extend beyond the sampled units. The reliability of these estimation methods depends critically on the completeness and quality of all variables involved in the stratification process.
+
+However, the dataset reflects real-world challenges such as **non-response** and **partial non-response**, which affect a subset of key variables. These issues introduce challenges related to data quality, accuracy, and overall reliability. To address this, the use case in WP9 focuses on predicting the variables required for stratification.
+
+## Key Variables
+
+### Time and Identifiers
+- ANO: Reference year of the observation  
+- ID: Anonymous identifier of the enterprise  
+- UNIT: Anonymous identifier of the enterprise unit (used when an enterprise has multiple units)
+
+### Enterprise Characteristics
+Variables ranging from DD_CC_FF_COD to UNI describe structural and operational characteristics of each enterprise.
+
+### Imputation Indicator
+- IMP: Indicates the origin of the data value:
+  - 0 → Real (observed) response  
+  - 1 or 2 → Imputed values based on year n-1 or n-2  
+  - 3 → Other types of imputation  
+
+### Integrated Administrative Variables
+- Variables prefixed with I* represent integrated administrative data sources.
+
+### Survey Variables
+- Variables prefixed with QF* correspond to survey questions.
+
+## Target Variable
+
+- QF185001: The target variable of interest in the WP9 use case
+
+## Notes
+
+This dataset is specifically designed to support methodological development in handling missing data and improving prediction of stratification variables. It reflects both observed and imputed data conditions commonly encountered in large-scale enterprise surveys.
 
