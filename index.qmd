@@ -11,7 +11,7 @@ author:
     url: https://github.com/vascoandre
     email: vasco.cordeiro@ine.pt
   - name:  Sónia Quaresma 
-    url:https://github.com/SoniaQuaresma
+    url: https://github.com/SoniaQuaresma
     email: sonia.quaresma@ine.pt
 
 date: today
