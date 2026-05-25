@@ -168,12 +168,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction-to-ggplot2" id="toc-introduction-to-ggplot2" class="nav-link active" data-scroll-target="#introduction-to-ggplot2">Introduction to <code>ggplot2</code></a>
+  <li><a href="#training-materials-on-cross-validation" id="toc-training-materials-on-cross-validation" class="nav-link active" data-scroll-target="#training-materials-on-cross-validation">Training Materials on Cross-Validation</a>
   <ul class="collapse">
-  <li><a href="#what-is-ggplot2" id="toc-what-is-ggplot2" class="nav-link" data-scroll-target="#what-is-ggplot2">What is <code>ggplot2</code>?</a></li>
-  <li><a href="#how-to-use-ggplot2" id="toc-how-to-use-ggplot2" class="nav-link" data-scroll-target="#how-to-use-ggplot2">How to use <code>ggplot2</code></a></li>
+  <li><a href="#why-cross-validation-matters" id="toc-why-cross-validation-matters" class="nav-link" data-scroll-target="#why-cross-validation-matters">Why cross-validation matters</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/AIML4OS-template-quarto-r/edit/main/chapters/chapter1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/AIML4OS-template-quarto-r/blob/main/chapters/chapter1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/AIML4OS-template-quarto-r/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -183,42 +181,97 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction-to-ggplot2" class="level1">
-<h1>Introduction to <code>ggplot2</code></h1>
-<section id="what-is-ggplot2" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-ggplot2">What is <code>ggplot2</code>?</h2>
-<p><code>ggplot2</code> is an amazing package for data visualisation.</p>
-</section>
-<section id="how-to-use-ggplot2" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-use-ggplot2">How to use <code>ggplot2</code></h2>
-<p>At first you need to check if your data is ok.</p>
-<p>Here is a code snippet to produce a beautiful plot done with <code>ggplot2</code>.</p>
+<section id="training-materials-on-cross-validation" class="level1">
+<h1>Training Materials on Cross-Validation</h1>
+<p>Cross-validation is not one-size-fits-all it depends on the structure of your data</p>
+<section id="why-cross-validation-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-cross-validation-matters">Why cross-validation matters</h2>
+<p>Goal: estimate generalization performance</p>
+<p>Problem: single train/test split → high variance</p>
+<p>Solution: resampling strategies</p>
+<p>Key message: The way you split your data can make your model look better or worse than it really is.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>iris <span class="ot">&lt;-</span> iris</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris) <span class="sc">+</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> Sepal.Length, <span class="at">y =</span> Petal.Length, <span class="at">color =</span> Species))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
 </div>
-<p>And here is the amazing result.</p>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'arrow'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:utils':
+
+    timestamp</code></pre>
+</div>
+</div>
 <div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="chapter1_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_cv0 <span class="ot">&lt;-</span>  <span class="fu">read_parquet</span>(<span class="st">"data/data_synth_cv0.parquet"</span>, <span class="at">as_data_frame =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_cv0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [3,496 × 42] (S3: tbl_df/tbl/data.frame)
+ $ ANO         : num [1:3496] 2026 2026 2026 2026 2026 ...
+ $ DD_CC_FF_COD: chr [1:3496] "140120" "010312" "050807" "310307" ...
+ $ N2_COD_1    : chr [1:3496] "16" "16" "16" "30" ...
+ $ ENUT        : chr [1:3496] "2" "2" "2" "7" ...
+ $ L_NUT       : chr [1:3496] "Centro" "Centro" "Centro" "Madeira" ...
+ $ NPS         : num [1:3496] 3 1 2 1 7 9 10 10 14 12 ...
+ $ INQ         : chr [1:3496] "1" "1" "1" "1" ...
+ $ L_EPS       : chr [1:3496] "1 a 19" "1 a 19" "1 a 19" "1 a 19" ...
+ $ VVN         : num [1:3496] 247262 49222 49404 32239 267866 ...
+ $ EVN         : chr [1:3496] "2" "1" "1" "1" ...
+ $ CAE_BC      : chr [1:3496] "41200" "43340" "43330" "43390" ...
+ $ ECAE        : chr [1:3496] "4120" "4334" "4333" "4339" ...
+ $ ESTRATO     : chr [1:3496] "41200.B.2" "43340.B.1" "43330.B.1" "43390.B.1" ...
+ $ AMH         : num [1:3496] 171 18 15 18 218 180 114 12 182 114 ...
+ $ UNI         : num [1:3496] 14287 477 466 516 218 ...
+ $ IMP         : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ I187701     : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ I20540      : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ I20550      : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF185001    : num [1:3496] 108056 52986 54000 1 278644 ...
+ $ QF185002    : num [1:3496] 0 0 0 0 105000 ...
+ $ QF185003    : num [1:3496] 108056 52986 54000 0 173644 ...
+ $ QF185004    : num [1:3496] 0 0 0 1 0 ...
+ $ QF185101    : num [1:3496] 108056 52986 54000 0 278644 ...
+ $ QF185501    : num [1:3496] 0 0 0 1 0 ...
+ $ QF186301    : num [1:3496] 0 0 0 0 0 ...
+ $ QF186302    : num [1:3496] 0 0 0 0 0 ...
+ $ QF186303    : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF186304    : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF186401    : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF187001    : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF187301    : num [1:3496] 0 0 0 0 0 ...
+ $ QF187401    : num [1:3496] 0 0 0 0 0 ...
+ $ QF187701    : num [1:3496] 108056 52986 54000 1 278644 ...
+ $ QF187702    : num [1:3496] 0 0 0 0 105000 ...
+ $ QF187703    : num [1:3496] 108056 52986 54000 0 173644 ...
+ $ QF187704    : num [1:3496] 0 0 0 1 0 ...
+ $ QF20540     : num [1:3496] 0 0 0 0 0 0 0 0 0 0 ...
+ $ QF20550     : num [1:3496] 108056 3255 1 1 10604 ...
+ $ source      : chr [1:3496] "B" "B" "B" "B" ...
+ $ ID          : num [1:3496] 1 2 3 4 5 6 7 8 9 10 ...
+ $ unit        : int [1:3496] 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
 </div>
 </div>
-</div>
-</section>
-</section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
-<p>Now you know everything on <code>ggplot2</code>.</p>
+<p>File description: This is a syntehtic file that simulates the answers received to the Survey on Construction Enterprises to collect key information on the structure and performance of the construction sector. Survey responses are used to define stratification variables that underpin estimation procedures extending beyond the sampled units. The effectiveness of this methodology critically depends on the completeness of all variables used in the stratum definition. However, non-response and partial non-response persist for a subset of these variables, posing challenges to data quality, accuracy, and reliability thus the use case in WP9 tries to predict the variables required for the strata. - ANO is year, - the other variables from DD_CC_FF_COD to UNI characterize the enterprise - IMP 0 for a real answer, 1 or 2 imputed with values from year n-1 or -2, 3 other imputations - the 3 variables started with I are Integrated administrative variables - the survey questions are prefixes with QF - source informs about the survey - ID is the anonymous ID of the enterprise - unit is the anonymous unit of the enterprise when it may have several units - the target is QF185001</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
