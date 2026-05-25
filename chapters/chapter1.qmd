@@ -1,50 +1,34 @@
 
+# Training Materials on Cross-Validation
 
-# Introduction to `ggplot2`
+Cross-validation is not one-size-fits-all it depends on the structure of your data
 
-## What is `ggplot2`?
+## Why cross-validation matters
 
-`ggplot2` is an amazing package for data visualisation.
+Goal: estimate generalization performance
 
-## How to use `ggplot2`
+Problem: single train/test split → high variance
+
+Solution: resampling strategies
+
+Key message: The way you split your data can make your model look better or worse than it really is.
 
 
-At first you need to check if your data is ok.
-
-
-
-Here is a code snippet to produce a beautiful plot done with `ggplot2`.
-
-```{r}
-#| warning: false
-#| eval: false
+```{r training setup}
+library(rsample)
 library(dplyr)
-library(ggplot2)
-
-iris <- iris
-
-ggplot(iris) +
-  geom_point(aes(x = Sepal.Length, y = Petal.Length, color = Species))
-
+library(arrow)
 ```
 
-And here is the amazing result.
+```{r read file cv0}
+data_cv0 <-  read_parquet("data/data_synth_cv0.parquet", as_data_frame = TRUE)
 
-```{r}
-#| warning: false
-#| echo: false
-library(dplyr)
-library(ggplot2)
-
-iris <- iris
-
-ggplot(iris) +
-  geom_point(aes(x = Sepal.Length, y = Petal.Length, color = Species))
-
+str(data_cv0)
 ```
-
-# Conclusion
-
-Now you know everything on `ggplot2`.
+File description:
+This is a syntehtic file that simulates the answers received to the Survey on Construction Enterprises to collect key information on the structure and performance of the construction sector. Survey responses are used to define stratification variables that underpin estimation procedures extending beyond the sampled units. The effectiveness of this methodology critically depends on the completeness of all variables used in the stratum definition. However, non-response and partial non-response persist for a subset of these variables, posing challenges to data quality, accuracy, and reliability thus the use case in WP9 tries to predict the variables required for the strata.
+- ANO is year,
+- the other variables from DD_CC_FF_COD to UNI characterize the enterprise 
+- IMP 0 for a real answer, 1 or 2 imputed with values from year n-1 or -2, 3 other imputations - the 3 variables started with I are Integrated administrative variables - the survey questions are prefixes with QF - source informs about the survey - ID is the anonymous ID of the enterprise - unit is the anonymous unit of the enterprise when it may have several units - the target is QF185001
 
 
