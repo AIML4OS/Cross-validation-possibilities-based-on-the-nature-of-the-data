@@ -24,7 +24,11 @@ website:
       - href: index.qmd
         text: Introduction
       - href: chapters/chapter1.qmd
-        text: Plot with ggplot2
+        text: Why cross-validation matters
+      - href: chapters/chapter2.qmd
+        text: Standard methods
+      - href: chapters/chapter3.qmd
+        text: Cross-validation based on data structure
 
 format:
   html:
