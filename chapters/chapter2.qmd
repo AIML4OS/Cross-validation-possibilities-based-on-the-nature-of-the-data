@@ -13,6 +13,10 @@ Solution: Simple train/test split (e.g. 80/20). Fast and easy, but sensitive to 
 Key message: A single split is a snapshot, not a guarantee. Model performance can change significantly depending on which observations end up in train vs test
 
 ```{r hold-out split}
+library(rsample)
+library(dplyr)
+library(arrow)
+data_cv0 <-  read_parquet("data/data_synth_cv0.parquet", as_data_frame = TRUE)
 # set seed to ensure reproducibility
 set.seed(123)
 
