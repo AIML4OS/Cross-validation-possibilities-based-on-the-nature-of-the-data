@@ -9,6 +9,8 @@
 ## How to use `ggplot2`
 
 
+At first you need to check if your data is ok.
+
 
 
 Here is a code snippet to produce a beautiful plot done with `ggplot2`.
