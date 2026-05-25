@@ -13,7 +13,7 @@ Key message: If you don't preserve the target distribution, you are no longer ev
 
 ```{r Stratified K-Fold}
 library(rsample)
-
+data_cv0 <- read.csv("data.csv")
 set.seed(123)
 
 folds <- vfold_cv(data_cv0, v = 5, strata = QF185001)
