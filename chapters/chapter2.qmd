@@ -1,0 +1,56 @@
+## Baseline: standard methods
+
+Let's assume: - the enterprise only has one unit responding - the data is only from one year - data is independent and identically distributed
+
+### Hold-out
+
+Goal: Develop and evaluate a model quickly
+
+Problem: A single split reduces available training data and produces a high-variance estimate of performance
+
+Solution: Simple train/test split (e.g. 80/20). Fast and easy, but sensitive to how the data is split
+
+Key message: A single split is a snapshot, not a guarantee. Model performance can change significantly depending on which observations end up in train vs test
+
+```{r hold-out split}
+# set seed to ensure reproducibility
+set.seed(123)
+
+# do the split 80/20
+split <- initial_split(data_cv0, prop = 0.8)
+
+# use the split, to produce the train and test datasets
+train_data <- training(split)
+test_data  <- testing(split)
+```
+
+### K-Fold Cross-Validation
+
+Goal: Obtain a more reliable estimate of model performance
+
+Problem: A single train/test split is unstable and wastes data for training
+
+Solution: Split data into K folds, train on K−1 folds and test on the remaining fold; repeat K times and average results. Good default when data is independent and identically distributed and there is no special structure.
+
+Key message: K-fold CV reduces dependence on a single split and gives a more stable and data-efficient estimate of performance Split into K folds train on K-1, test on 1.
+
+```{r k-folds}
+set.seed(123)
+
+folds <- vfold_cv(data_cv0, v = 5)
+
+# keep only first fold
+folds_1 <- folds$splits[[1]]
+
+folds_1
+```
+
+```{r analyse fold}
+fold_1 <- folds$splits[[1]]
+fold_1
+
+train_fold <- analysis(fold_1)
+test_fold  <- assessment(fold_1)
+
+length(folds$splits)
+```
