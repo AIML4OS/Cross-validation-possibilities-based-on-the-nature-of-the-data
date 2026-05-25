@@ -2,4 +2,4 @@
 title: "About"
 ---
 
-About this site
+The repository contains materials on Cross-validation possibilities based on the nature of the data, developed in collaboration within WP9, subgroup 2
