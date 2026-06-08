@@ -78,7 +78,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-84365199647afda7ec578bfe13ef3742.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-814b7d86f81bef83ceb6a6c63506e914.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -1057,20 +1057,69 @@ $ unit         &lt;int&gt; 1, 2, 1, 2, 1, 2, 1, 2, 3, 1, 2, 1, 2…</code></pre>
 </section>
 <section id="model-selection-vs-performance-estimation" class="level3">
 <h3 class="anchored" data-anchor-id="model-selection-vs-performance-estimation">Model selection vs performance estimation</h3>
+<section id="this-model-is-illustative-and-is-not-supposed-to-be-executed" class="level4">
+<h4 class="anchored" data-anchor-id="this-model-is-illustative-and-is-not-supposed-to-be-executed">This model is illustative and is not supposed to be executed</h4>
 <p>Goal: Distinguish between choosing the best model and estimating its real-world performance</p>
 <p>Problem: If you use the same data for both you optimize and evaluate on the same information which leads to optimistic bias and performance looks better than it really is</p>
 <p>Solution: Separate the processes - Inner loop Model selection (tuning, comparing models) - Outer loop - Performance estimation (unbiased evaluation) This is typically done with nested cross-validation</p>
 <p>Key Message: If you evaluate a model on the same data used to select it, you are measuring optimism, not performance.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
 <span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">group_vfold_cv</span>(data_cv1, <span class="at">group =</span> ID, <span class="at">v =</span> <span class="dv">5</span>)</span>
 <span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>outer_folds <span class="ot">&lt;-</span> folds  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 <p>Nested Cross-Validation prevents overfitting during hyperparameter tuning</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>errs <span class="ot">&lt;-</span> <span class="fu">sapply</span>(outer_folds, <span class="cf">function</span>(f) {</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  train_outer <span class="ot">&lt;-</span> f<span class="sc">$</span>train</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>  test_outer  <span class="ot">&lt;-</span> f<span class="sc">$</span>test</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># --- INNER CV (model selection) ---</span></span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>  inner_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(train_outer, <span class="at">v =</span> <span class="dv">5</span>)</span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>  model_errors <span class="ot">&lt;-</span> <span class="fu">sapply</span>(inner_folds<span class="sc">$</span>splits, <span class="cf">function</span>(s) {</span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a>    train <span class="ot">&lt;-</span> <span class="fu">analysis</span>(s)</span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a>    test  <span class="ot">&lt;-</span> <span class="fu">assessment</span>(s)</span>
+<span id="cb99-16"><a href="#cb99-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb99-17"><a href="#cb99-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Model 1: mean</span></span>
+<span id="cb99-18"><a href="#cb99-18" aria-hidden="true" tabindex="-1"></a>    pred1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(train<span class="sc">$</span>QF185001)</span>
+<span id="cb99-19"><a href="#cb99-19" aria-hidden="true" tabindex="-1"></a>    err1 <span class="ot">&lt;-</span> <span class="fu">mean</span>((test<span class="sc">$</span>QF185001 <span class="sc">-</span> pred1)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb99-20"><a href="#cb99-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb99-21"><a href="#cb99-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Model 2: linear model</span></span>
+<span id="cb99-22"><a href="#cb99-22" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">lm</span>(QF185001 <span class="sc">~</span> ., <span class="at">data =</span> train)</span>
+<span id="cb99-23"><a href="#cb99-23" aria-hidden="true" tabindex="-1"></a>    pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(m, test)</span>
+<span id="cb99-24"><a href="#cb99-24" aria-hidden="true" tabindex="-1"></a>    err2 <span class="ot">&lt;-</span> <span class="fu">mean</span>((test<span class="sc">$</span>QF185001 <span class="sc">-</span> pred2)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb99-25"><a href="#cb99-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb99-26"><a href="#cb99-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(err1, err2)</span>
+<span id="cb99-27"><a href="#cb99-27" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb99-28"><a href="#cb99-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-29"><a href="#cb99-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># average inner CV error per model</span></span>
+<span id="cb99-30"><a href="#cb99-30" aria-hidden="true" tabindex="-1"></a>  avg_errs <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(model_errors)</span>
+<span id="cb99-31"><a href="#cb99-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-32"><a href="#cb99-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select best model</span></span>
+<span id="cb99-33"><a href="#cb99-33" aria-hidden="true" tabindex="-1"></a>  best_model <span class="ot">&lt;-</span> <span class="fu">which.min</span>(avg_errs)</span>
+<span id="cb99-34"><a href="#cb99-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-35"><a href="#cb99-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># --- RETRAIN on full outer train ---</span></span>
+<span id="cb99-36"><a href="#cb99-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (best_model <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb99-37"><a href="#cb99-37" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">mean</span>(train_outer<span class="sc">$</span>QF185001)</span>
+<span id="cb99-38"><a href="#cb99-38" aria-hidden="true" tabindex="-1"></a>    test_err <span class="ot">&lt;-</span> <span class="fu">mean</span>((test_outer<span class="sc">$</span>QF185001 <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb99-39"><a href="#cb99-39" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb99-40"><a href="#cb99-40" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">lm</span>(QF185001 <span class="sc">~</span> ., <span class="at">data =</span> train_outer)</span>
+<span id="cb99-41"><a href="#cb99-41" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(m, test_outer)</span>
+<span id="cb99-42"><a href="#cb99-42" aria-hidden="true" tabindex="-1"></a>    test_err <span class="ot">&lt;-</span> <span class="fu">mean</span>((test_outer<span class="sc">$</span>QF185001 <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb99-43"><a href="#cb99-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb99-44"><a href="#cb99-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb99-45"><a href="#cb99-45" aria-hidden="true" tabindex="-1"></a>  test_err</span>
+<span id="cb99-46"><a href="#cb99-46" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb99-47"><a href="#cb99-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-48"><a href="#cb99-48" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(errs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This looks like standard CV, but it is incorrect for this dataset.</p>
-<p>Goal: Distinguish between choosing the best model and estimating its real-world performance</p>
+<p>Goal: Distinguish between choosing the best model and estimating its real-world performan</p>
+</section>
 </section>
 <section id="spatial-data" class="level3">
 <h3 class="anchored" data-anchor-id="spatial-data">Spatial data</h3>
